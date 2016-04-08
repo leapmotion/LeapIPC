@@ -1,4 +1,4 @@
-// Copyright (c) 2010 - 2015 Leap Motion. All rights reserved. Proprietary and confidential.
+// Copyright (C) 2012-2016 Leap Motion, Inc. All rights reserved.
 #pragma once
 
 #include <autowiring/C++11/cpp11.h>
