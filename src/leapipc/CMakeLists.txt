@@ -45,6 +45,8 @@ add_library(LeapIPC ${IPC_SRCS})
 target_link_libraries(LeapIPC ${IPC_LIBS} Autowiring::Autowiring LeapSerial::LeapSerial)
 
 if(NOT WIN32)
+  find_package(Boost REQUIRED COMPONENTS filesystem)
+
   set(Boost_FILESYSTEM_LIBRARY libboost_filesystem)
   add_library(${Boost_FILESYSTEM_LIBRARY} STATIC IMPORTED)
   set_property(TARGET ${Boost_FILESYSTEM_LIBRARY} PROPERTY IMPORTED_LOCATION ${Boost_LIBRARY_DIRS}/${Boost_FILESYSTEM_LIBRARY}${STATIC_LIBRARY_SUFFIX})
@@ -53,7 +55,7 @@ if(NOT WIN32)
   add_library(${Boost_SYSTEM_LIBRARY} STATIC IMPORTED)
   set_property(TARGET ${Boost_SYSTEM_LIBRARY} PROPERTY IMPORTED_LOCATION ${Boost_LIBRARY_DIRS}/${Boost_SYSTEM_LIBRARY}${STATIC_LIBRARY_SUFFIX})
 
-  target_link_libraries(IPC ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+  target_link_libraries(LeapIPC ${Boost_FILESYSTEM_LIBRARY} ${Boost_SYSTEM_LIBRARY})
 endif()
 
 install_headers(TARGET LeapIPC DESTINATION include/leapipc COMPONENT LeapIPC)
