@@ -1,6 +1,6 @@
 #pragma once
 #include "MessageBuffers.h"
-#include "LeapSerial/Archive.h"
+#include <LeapSerial/Archive.h>
 #include <mutex>
 #include <memory>
 #include <thread>
@@ -205,7 +205,7 @@ protected:
   void Close(Reason reason);
 
   // PID of the remote endpoint
-  pid_t m_pid = 0;
+  uint32_t m_pid = 0;
 
 private:
   void ReleaseChannel(uint32_t channel, Channel::Mode mode);
@@ -316,7 +316,7 @@ public:
   /// <summary>
   /// Returns the PID of the remote endpoint
   /// </summary>
-  pid_t PeerProcessId() const { return m_pid; }
+  uint32_t PeerProcessId() const { return m_pid; }
 
   /// <summary>
   /// Abandons any blocking operations and prepares this connection for termination

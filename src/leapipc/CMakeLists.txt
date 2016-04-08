@@ -41,7 +41,7 @@ find_package(autowiring 0.7.8 REQUIRED)
 find_package(leapserial REQUIRED)
 
 add_library(LeapIPC ${IPC_SRCS})
-target_link_libraries(LeapIPC ${IPC_LIBS} Autowiring::Autowiring LeapSerial::LeapSerial SystemUtility)
+target_link_libraries(LeapIPC ${IPC_LIBS} Autowiring::Autowiring LeapSerial::LeapSerial)
 
 if(NOT WIN32)
   set(Boost_FILESYSTEM_LIBRARY libboost_filesystem)
