@@ -4,6 +4,8 @@
 #include "NamedPipeWin.h"
 #include <autowiring/autowiring.h>
 
+using namespace leap::ipc;
+
 IPCClientWin::IPCClientWin(const char* pstrNamespace):
   m_namespace(LR"(\\.\pipe\)"),
   m_statusBlock(pstrNamespace),

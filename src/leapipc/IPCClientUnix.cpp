@@ -14,6 +14,8 @@
 #include <sys/un.h>
 #endif
 
+using namespace leap::ipc;
+
 IPCClientUnix::IPCClientUnix(const char* pstrScope, const char* pstrNamespace) :
   m_namespace{ pstrScope ? pstrScope : "" }
 {

@@ -2,6 +2,9 @@
 #include <autowiring/CoreJob.h>
 #include <autowiring/auto_signal.h>
 
+namespace leap {
+namespace ipc {
+
 class IPCClient;
 class IPCEndpoint;
 
@@ -25,3 +28,4 @@ public:
   void TryConnect(void);
 };
 
+}}

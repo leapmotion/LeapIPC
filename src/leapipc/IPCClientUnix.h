@@ -3,6 +3,9 @@
 #include <atomic>
 #include <string>
 
+namespace leap {
+namespace ipc {
+
 class IPCClientUnix:
   public IPCClient
 {
@@ -19,3 +22,5 @@ public:
   }
   std::shared_ptr<IPCEndpoint> Connect(std::chrono::microseconds dt) override;
 };
+
+}}

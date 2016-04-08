@@ -11,6 +11,8 @@
 #include <poll.h>
 #endif
 
+using namespace leap::ipc;
+
 IPCEndpointUnix::IPCEndpointUnix(int socket):
   m_socket{socket}
 {

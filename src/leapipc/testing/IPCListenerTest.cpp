@@ -13,6 +13,8 @@
 #include <system_error>
 #include FUTURE_HEADER
 
+using namespace leap::ipc;
+
 static const int sc_nTestMessages = 20;
 
 class IPCListenerTest:

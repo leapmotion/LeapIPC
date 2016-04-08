@@ -2,6 +2,8 @@
 #include "NamedPipeStatusBlockWin.h"
 #include "DefaultSecurityDescriptor.h"
 
+using namespace leap::ipc;
+
 NamedPipeStatusBlockWin::NamedPipeStatusBlockWin(const char* pstrNamespace):
   m_hAbandon(CreateEvent(nullptr, false, false, nullptr))
 {

@@ -19,7 +19,9 @@
 #include <sys/un.h>
 #endif
 
-const char* IPCTestScope(void) {
+using namespace leap::ipc;
+
+const char* leap::ipc::IPCTestScope(void) {
   // For Unix-based systems, specify a user-specific directory for the tests.
   static const std::string scopePath = [] {
     std::stringstream ss;

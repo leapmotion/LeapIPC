@@ -9,6 +9,8 @@
 #include <thread>
 #include FUTURE_HEADER
 
+using namespace leap::ipc;
+
 class IPCMessagingTest:
   public testing::Test
 {

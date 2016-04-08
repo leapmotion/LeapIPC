@@ -1,5 +1,8 @@
 #pragma once
-#include "SystemUtility/AutoHandle.h"
+#include "AutoHandle.h"
+
+namespace leap {
+namespace ipc {
 
 struct AutoLocker {
   AutoLocker(HANDLE hEvent, HANDLE hMutex) :
@@ -73,3 +76,4 @@ public:
   void Abandon(void);
 };
 
+}}

@@ -3,6 +3,10 @@
 #include <autowiring/auto_signal.h>
 
 class CoreContext;
+
+namespace leap {
+namespace ipc {
+
 class IPCEndpoint;
 
 /// <summary>
@@ -58,3 +62,5 @@ public:
     return New(nullptr, pstrNamespace);
   }
 };
+
+}}

@@ -4,6 +4,8 @@
 #include <random>
 #include <sstream>
 
+using namespace leap::ipc;
+
 std::string IPCTestNamespace(void) {
   std::mt19937 rnd(std::random_device{}());
   std::stringstream randStr;

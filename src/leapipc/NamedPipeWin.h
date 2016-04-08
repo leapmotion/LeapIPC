@@ -1,6 +1,9 @@
 #pragma once
 #include "Overlapped.h"
 
+namespace leap {
+namespace ipc {
+
 /// <summary>
 /// Windows named pipe RAII class
 /// </summary>
@@ -24,3 +27,5 @@ public:
 
   HANDLE operator*(void) const { return m_hPipe; }
 };
+
+}}

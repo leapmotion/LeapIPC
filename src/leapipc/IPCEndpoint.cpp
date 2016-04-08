@@ -2,6 +2,8 @@
 #include "IPCEndpoint.h"
 #include <stdexcept>
 
+using namespace leap::ipc;
+
 //
 // IPCEndpoint::Channel
 //

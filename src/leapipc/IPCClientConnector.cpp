@@ -3,6 +3,8 @@
 #include "IPCClient.h"
 #include "IPCEndpoint.h"
 
+using namespace leap::ipc;
+
 IPCClientConnector::IPCClientConnector(IPCClient& client):
   client(client)
 {

@@ -1,8 +1,11 @@
 #pragma once
 #include "IPCListener.h"
 #include "NamedPipeStatusBlockWin.h"
-#include "SystemUtility/AutoHandle.h"
+#include "AutoHandle.h"
 #include <autowiring/ObjectPool.h>
+
+namespace leap {
+namespace ipc {
 
 class NamedPipeWin;
 
@@ -39,3 +42,5 @@ protected:
   void OnStop(void) override;
   void Run(void) override;
 };
+
+}}

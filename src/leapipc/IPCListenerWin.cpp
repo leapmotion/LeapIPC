@@ -6,7 +6,9 @@
 #include <autowiring/Autowired.h>
 #include <autowiring/BasicThreadStateBlock.h>
 
-const char* IPCTestScope(void) { return "session"; }
+using namespace leap::ipc;
+
+const char* leap::ipc::IPCTestScope(void) { return "session"; }
 
 IPCListenerWin::IPCListenerWin(const char* pstrNamespace) :
   m_namespace(LR"(\\.\pipe\)"),

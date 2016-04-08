@@ -3,6 +3,9 @@
 #include <autowiring/autowiring.h>
 #include <boost/filesystem/path.hpp>
 
+namespace leap {
+namespace ipc {
+
 class FileMonitor;
 class FileWatch;
 
@@ -44,3 +47,5 @@ protected:
   // CoreThread overrides:
   void Run(void) override;
 };
+
+}}

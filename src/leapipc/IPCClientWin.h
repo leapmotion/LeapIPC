@@ -3,7 +3,10 @@
 #include "NamedPipeStatusBlockWin.h"
 #include <autowiring/CoreRunnable.h>
 
-class IPCClientWin:
+namespace leap {
+namespace ipc {
+
+class IPCClientWin :
   public IPCClient
 {
 public:
@@ -28,3 +31,4 @@ public:
   std::shared_ptr<IPCEndpoint> Connect(std::chrono::microseconds dt) override;
 };
 
+}}

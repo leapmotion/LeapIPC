@@ -1,8 +1,11 @@
 #pragma once
 #include "IPCEndpoint.h"
-#include "SystemUtility/AutoHandle.h"
+#include "AutoHandle.h"
 #include <atomic>
 #include <memory>
+
+namespace leap {
+namespace ipc {
 
 class NamedPipeWin;
 
@@ -31,3 +34,5 @@ public:
   bool WriteRaw(const void* pBuf, std::streamsize nBytes) override;
   bool Abort(Reason reason) override;
 };
+
+}}

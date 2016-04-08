@@ -9,6 +9,9 @@
 #include <cstdint>
 #include <vector>
 
+namespace leap {
+namespace ipc {
+
 /// <summary>
 /// Platform-independent IPC client interface
 /// </summary>
@@ -331,3 +334,5 @@ public:
   /// <returns>The first call will return true, subsequent calls will return false</returns>
   virtual bool Abort(Reason reason = Reason::UserAborted) = 0;
 };
+
+}}

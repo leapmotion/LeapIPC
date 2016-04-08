@@ -7,6 +7,8 @@
 #include <autowiring/CoreThread.h>
 #include "IPCTestUtils.h"
 
+using namespace leap::ipc;
+
 class IPCChannelTest:
   public testing::Test
 {

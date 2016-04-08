@@ -8,6 +8,9 @@
 #define MSG_NOSIGNAL 0
 #endif
 
+namespace leap {
+namespace ipc {
+
 class IPCEndpointUnix:
   public IPCEndpoint
 {
@@ -26,3 +29,5 @@ private:
   // File descriptor of our socket
   std::atomic<int> m_socket;
 };
+
+}}

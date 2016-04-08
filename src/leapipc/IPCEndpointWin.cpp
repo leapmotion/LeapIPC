@@ -3,6 +3,8 @@
 #include "NamedPipeWin.h"
 #include <system_error>
 
+using namespace leap::ipc;
+
 IPCEndpointWin::IPCEndpointWin(const std::shared_ptr<NamedPipeWin>& namedPipe):
   m_namedPipe(namedPipe),
   m_namedPipeShared(namedPipe),
@@ -13,7 +15,7 @@ IPCEndpointWin::IPCEndpointWin(const std::shared_ptr<NamedPipeWin>& namedPipe):
     throw std::runtime_error("Leap Service appears to be running on Windows XP or older");
 
   if(NamedPipeWin::s_GetNamedPipeClientProcessId(namedPipe->m_hPipe, &pid))
-    m_pid = static_cast<pid_t>(pid);
+    m_pid = static_cast<uint32_t>(pid);
 }
 
 IPCEndpointWin::~IPCEndpointWin(void)

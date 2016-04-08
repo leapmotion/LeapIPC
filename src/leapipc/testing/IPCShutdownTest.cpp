@@ -6,6 +6,8 @@
 #include <gtest/gtest.h>
 #include <autowiring/autowiring.h>
 
+using namespace leap::ipc;
+
 class IPCShutdownTest:
   public testing::Test
 {

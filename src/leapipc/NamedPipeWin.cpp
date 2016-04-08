@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "NamedPipeWin.h"
 
+using namespace leap::ipc;
+
 static const HMODULE hKernel32 = LoadLibrary("kernel32.dll");
 const decltype(&GetNamedPipeClientProcessId) NamedPipeWin::s_GetNamedPipeClientProcessId = (decltype(&GetNamedPipeClientProcessId))GetProcAddress(hKernel32, "GetNamedPipeClientProcessId");
 const decltype(&CancelIoEx) NamedPipeWin::s_CancelIoEx = (decltype(&CancelIoEx)) GetProcAddress(hKernel32, "CancelIoEx");

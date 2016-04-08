@@ -4,6 +4,9 @@
 #include <chrono>
 #include <memory>
 
+namespace leap {
+namespace ipc {
+
 class IPCEndpoint;
 
 /// <summary>
@@ -49,3 +52,5 @@ public:
   // CoreRunnable overrides:
   bool OnStart(void) override { return true; }
 };
+
+}}

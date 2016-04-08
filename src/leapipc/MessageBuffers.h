@@ -4,6 +4,9 @@
 #include <autowiring/ObjectPool.h>
 #include <vector>
 
+namespace leap {
+namespace ipc {
+
 namespace MessageBuffers {
   template<typename T>
   class RawBuffer {
@@ -113,3 +116,5 @@ namespace MessageBuffers {
 
   using SharedBufferPool = RawBufferPool<uint8_t>;
 };
+
+}}

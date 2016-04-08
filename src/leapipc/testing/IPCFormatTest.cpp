@@ -5,6 +5,8 @@
 #include "IPCTestUtils.h"
 #include <gtest/gtest.h>
 
+using namespace leap::ipc;
+
 class IPCFormatTest :
   public testing::Test
 {};
