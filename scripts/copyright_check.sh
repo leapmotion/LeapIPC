@@ -4,7 +4,7 @@
 # Enforce LeapMotion copyright notice
 #
 
-ENFORCED_FILES="LeapSerial src"
+ENFORCED_FILES="src"
 COPYRIGHT_HEADER="// Copyright (C) 2012-2016 Leap Motion, Inc. All rights reserved."
 
 # Go to root directory

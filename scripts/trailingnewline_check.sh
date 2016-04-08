@@ -4,7 +4,7 @@
 # Enforce EOF new line
 #
 
-ENFORCED_FILES="LeapSerial src"
+ENFORCED_FILES="src"
 
 # Go to root directory
 for f in $(find $ENFORCED_FILES -name *.hpp -o -name *.cpp -o -name *.h -o -name CMakeLists.txt);
