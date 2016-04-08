@@ -1,4 +1,5 @@
 set(IPC_SRCS
+  FileMonitor.h
   IPCClient.h
   IPCClientConnector.h
   IPCClientConnector.cpp
@@ -13,6 +14,8 @@ add_windows_sources(IPC_SRCS
   AutoHandle.h
   DefaultSecurityDescriptor.h
   DefaultSecurityDescriptor.cpp
+  FileMonitorWin.h
+  FileMonitorWin.cpp
   IPCClientWin.h
   IPCClientWin.cpp
   IPCEndpointWin.h
@@ -25,6 +28,16 @@ add_windows_sources(IPC_SRCS
   NamedPipeStatusBlockWin.h
   NamedPipeStatusBlockWin.cpp
   Overlapped.h
+)
+
+add_unix_sources(IPC_SRCS
+  FileMonitorUnix.h
+  FileMonitorUnix.cpp
+)
+
+add_mac_sources(IPC_SRCS
+  FileMonitorMac.h
+  FileMonitorMac.cpp
 )
 
 add_posix_sources(IPC_SRCS

@@ -1,4 +1,5 @@
 set(LeapIPCTest_SRCS
+  FileMonitorTest.cpp
   IPCChannelTest.cpp
   IPCFormatTest.cpp
   IPCListenerTest.cpp
