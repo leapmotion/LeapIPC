@@ -38,7 +38,7 @@ add_posix_sources(IPC_SRCS
 
 add_pch(IPC_SRCS "stdafx.h" "stdafx.cpp")
 
-find_package(autowiring 0.7.8 REQUIRED)
+find_package(autowiring 1.0.0 REQUIRED)
 find_package(leapserial REQUIRED)
 
 add_library(LeapIPC ${IPC_SRCS})

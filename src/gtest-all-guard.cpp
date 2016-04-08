@@ -1,7 +1,7 @@
 // Copyright (C) 2012-2016 Leap Motion, Inc. All rights reserved.
 #define NOMINMAX
 #include <gtest/gtest-all.cc>
-#include <autowiring/AutowiringEnclosure.h>
+#include <autotesting/AutowiringEnclosure.h>
 
 using namespace std;
 
