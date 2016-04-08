@@ -1,13 +1,13 @@
 #include "stdafx.h"
-#include "IPCClient.h"
-#include "IPCEndpoint.h"
-#include "IPCListener.h"
 #include "IPCTestUtils.h"
 #include <autowiring/autowiring.h>
 #include <autowiring/Bolt.h>
 #include <autowiring/ContextEnumerator.h>
 #include <autowiring/CoreThread.h>
 #include <autowiring/ExceptionFilter.h>
+#include <leapipc/IPCClient.h>
+#include <leapipc/IPCEndpoint.h>
+#include <leapipc/IPCListener.h>
 #include <thread>
 #include <gtest/gtest.h>
 #include <system_error>

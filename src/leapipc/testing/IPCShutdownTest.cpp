@@ -1,10 +1,10 @@
 #include "stdafx.h"
-#include "IPCClient.h"
-#include "IPCEndpoint.h"
-#include "IPCListener.h"
 #include "IPCTestUtils.h"
-#include <gtest/gtest.h>
 #include <autowiring/autowiring.h>
+#include <leapipc/IPCClient.h>
+#include <leapipc/IPCEndpoint.h>
+#include <leapipc/IPCListener.h>
+#include <gtest/gtest.h>
 
 using namespace leap::ipc;
 
