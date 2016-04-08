@@ -10,6 +10,7 @@ set(IPC_SRCS
 )
 
 add_windows_sources(IPC_SRCS
+  AutoHandle.h
   DefaultSecurityDescriptor.h
   DefaultSecurityDescriptor.cpp
   IPCClientWin.h
