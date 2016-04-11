@@ -49,12 +49,9 @@ void FileMonitorTest::SetUp(void) {
   AutoCurrentContext ctxt;
   ctxt->Initiate();
 
-  parent = std::filesystem::canonical(
-    std::filesystem::wpath{
-      L"com.leapmotion.FileMonitorTest." + MakeRandomName()
-    }
-  );
+  parent = L"com.leapmotion.FileMonitorTest." + MakeRandomName();
   ASSERT_TRUE(std::filesystem::create_directory(parent));
+  parent = std::filesystem::canonical(parent);
   ASSERT_TRUE(std::filesystem::exists(parent));
 }
 
