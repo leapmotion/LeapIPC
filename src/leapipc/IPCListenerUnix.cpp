@@ -1,12 +1,10 @@
 // Copyright (C) 2012-2016 Leap Motion, Inc. All rights reserved.
 #include "stdafx.h"
 #include "IPCListenerUnix.h"
+#include "FileMonitor.h"
 #include "IPCEndpointUnix.h"
-#include "SystemUtility/FileMonitor.h"
 #include <autowiring/BasicThreadStateBlock.h>
 #include <autowiring/ContextEnumerator.h>
-
-#include <boost/filesystem/operations.hpp>
 
 #include <poll.h>
 #include <unistd.h>
@@ -19,6 +17,8 @@
 #else
 #include <sys/un.h>
 #endif
+#include <sstream>
+#include FILESYSTEM_HEADER
 
 using namespace leap::ipc;
 
@@ -53,7 +53,7 @@ IPCListenerUnix::IPCListenerUnix(const char* pstrScope, const char* pstrNamespac
     throw std::invalid_argument("Unix domain socket scopes must end with a trailing slash");
 
   name += pstrNamespace;
-  m_namespace = boost::filesystem::path(name);
+  m_namespace = std::filesystem::path(name);
   if (m_namespace.empty())
     throw std::runtime_error("Cannot create an IPC listener on an empty namespace");
   if (!m_namespace.has_filename())
@@ -83,7 +83,7 @@ void IPCListenerUnix::OnStop(void) {
   (void)::write(m_sendFd, "_", 1);
 }
 
-IPCListenerUnix::IPCNamespace::IPCNamespace(FileMonitor* m_fileMonitor, const boost::filesystem::path& ns, const int& sendFd) :
+IPCListenerUnix::IPCNamespace::IPCNamespace(FileMonitor* m_fileMonitor, const std::filesystem::path& ns, const int& sendFd) :
   ns(ns),
   m_socket{
     ::socket(
@@ -112,11 +112,11 @@ IPCListenerUnix::IPCNamespace::IPCNamespace(FileMonitor* m_fileMonitor, const bo
   const int so_enable = 1;
   ::setsockopt(m_socket, SOL_SOCKET, SO_REUSEADDR, &so_enable, sizeof(so_enable));
 #else
-  boost::filesystem::path directory(ns.parent_path());
+  std::filesystem::path directory(ns.parent_path());
   const mode_t permissions   = S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH; // 0775
   const mode_t nsPermissions = S_IRWXU | S_IRWXG | S_IRWXO;           // 0777
 
-  if (!boost::filesystem::exists(directory) && ::mkdir(directory.c_str(), permissions) == -1) {
+  if (!std::filesystem::exists(directory) && ::mkdir(directory.c_str(), permissions) == -1) {
     return;
   }
   ::chmod(directory.c_str(), permissions);
@@ -165,7 +165,7 @@ IPCListenerUnix::IPCNamespace::IPCNamespace(FileMonitor* m_fileMonitor, const bo
       [this] (std::shared_ptr<FileWatch> fileWatch, FileWatch::State states) mutable {
         if (
           !(states & FileWatch::State::MODIFIED) ||
-          !boost::filesystem::exists(this->ns)
+          !std::filesystem::exists(this->ns)
         ) {
           ok = false;
           (void)::write(m_sendFd, ".", 1);
@@ -187,11 +187,11 @@ IPCListenerUnix::IPCNamespace::~IPCNamespace(void) {
 
 #if !USE_NETWORK_SOCKETS
   m_watcher.reset();
-  if (boost::filesystem::exists(ns)) {
+  if (std::filesystem::exists(ns)) {
     ::unlink(ns.c_str());
   }
-  boost::filesystem::path dir = boost::filesystem::path(ns).parent_path();
-  if (boost::filesystem::exists(dir)) {
+  std::filesystem::path dir = std::filesystem::path(ns).parent_path();
+  if (std::filesystem::exists(dir)) {
     ::rmdir(dir.c_str());
   }
 #endif

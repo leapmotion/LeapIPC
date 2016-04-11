@@ -29,7 +29,7 @@ public:
     ALL      = (RENAMED | DELETED | MODIFIED)
   };
 
-  FileWatch(const std::filesystem::wpath& path) :
+  FileWatch(const std::filesystem::path& path) :
     IsDirectory(std::filesystem::is_directory(path)),
     m_path(path)
   {}
@@ -42,11 +42,11 @@ public:
   /// <summary>
   /// Retrieve file path being watched.
   /// </summary>
-  const std::filesystem::wpath& Path() const { return m_path; }
+  const std::filesystem::path& Path() const { return m_path; }
 
 protected:
   // Path of file/directory being monitored
-  std::filesystem::wpath m_path;
+  std::filesystem::path m_path;
 };
 
 inline FileWatch::State operator|(FileWatch::State a, FileWatch::State b) {
@@ -70,7 +70,7 @@ class FileMonitor :
     /// <summary>
     /// Begin watching for activity on a particular file.
     /// </summary>
-    virtual std::shared_ptr<FileWatch> Watch(const std::filesystem::wpath& path,
+    virtual std::shared_ptr<FileWatch> Watch(const std::filesystem::path& path,
                                              const t_callbackFunc& callback,
                                              FileWatch::State states = FileWatch::State::ALL) = 0;
 

@@ -5,6 +5,7 @@
 #include <leapipc/FileMonitor.h>
 #include <gtest/gtest.h>
 #include <array>
+#include <fstream>
 #include <thread>
 #include CHRONO_HEADER
 #include FILESYSTEM_HEADER
@@ -19,7 +20,7 @@ public:
   void TearDown(void) override;
 
   // Directory where all temporary files will be created
-  std::filesystem::wpath parent;
+  std::filesystem::path parent;
 
   static std::wstring MakeRandomName(void) {
     static uint32_t s_counter = 0;
@@ -29,11 +30,11 @@ public:
     return oss.str();
   }
 
-  std::filesystem::wpath GetTemporaryName() {
-    return parent / std::filesystem::wpath(MakeRandomName());
+  std::filesystem::path GetTemporaryName() {
+    return parent / std::filesystem::path(MakeRandomName());
   }
 
-  static bool SetFileContent(const std::filesystem::wpath& path, const std::string& content, std::ios_base::openmode mode = std::ios_base::out) {
+  static bool SetFileContent(const std::filesystem::path& path, const std::string& content, std::ios_base::openmode mode = std::ios_base::out) {
     std::ofstream ofs(path.string(), mode);
     if (!ofs)
       return false;
@@ -82,8 +83,8 @@ TEST_F(FileMonitorTest, MonitorDirectory) {
   AutoRequired<FileMonitor> fm;
   serverContext->Initiate();
 
-  std::filesystem::wpath one = GetTemporaryName();
-  std::filesystem::wpath two = GetTemporaryName();
+  std::filesystem::path one = GetTemporaryName();
+  std::filesystem::path two = GetTemporaryName();
 
   // We must use a shared pointer here because watch lambdas are executed asynchronously--it is a real
   // risk that this function could already be exited even after a notification is on its way.
@@ -150,7 +151,7 @@ TEST_F(FileMonitorTest, MonitorDirectory) {
   fmtmo->dirModified = false;
 
   // Rename second file to first file
-  ASSERT_TRUE(std::filesystem::rename(two, one)) << "Failed to rename one test file to another";
+  std::filesystem::rename(two, one);
   ASSERT_TRUE(std::filesystem::exists(one));
   ASSERT_FALSE(std::filesystem::exists(two));
   ASSERT_TRUE(fmtmo->cond.wait_for(lock, std::chrono::seconds(5), [&] { return fmtmo->dirModified; }));
@@ -195,8 +196,8 @@ TEST_F(FileMonitorTest, MonitorMultipleDeletes) {
   AutoRequired<FileMonitor> fm;
   serverContext->Initiate();
 
-  std::filesystem::wpath one = GetTemporaryName();
-  std::filesystem::wpath two  = GetTemporaryName();
+  std::filesystem::path one = GetTemporaryName();
+  std::filesystem::path two  = GetTemporaryName();
 
   SetFileContent(one, "one");
   SetFileContent(two, "two");
@@ -258,8 +259,8 @@ TEST_F(FileMonitorTest, MultipleWatchersSameFile) {
   AutoRequired<FileMonitor> fm;
   serverContext->Initiate();
 
-  std::filesystem::wpath one = GetTemporaryName();
-  std::filesystem::wpath two = GetTemporaryName();
+  std::filesystem::path one = GetTemporaryName();
+  std::filesystem::path two = GetTemporaryName();
   SetFileContent(one, "one");
   SetFileContent(two, "two");
   ASSERT_TRUE(std::filesystem::exists(one));
@@ -318,7 +319,7 @@ TEST_F(FileMonitorTest, FileNotFound) {
   AutoRequired<FileMonitor> fm;
   serverContext->Initiate();
 
-  std::filesystem::wpath missing = GetTemporaryName();
+  std::filesystem::path missing = GetTemporaryName();
 
   auto watcher = fm->Watch(
     missing,
@@ -344,7 +345,7 @@ TEST_F(FileMonitorTest, ModifiedAttributes) {
   AutoRequired<FileMonitor> fm;
   serverContext->Initiate();
 
-  std::filesystem::path one = GetTemporaryPath();
+  std::filesystem::path one = GetTemporaryName();
   auto cleanup = MakeAtExit([one]{ std::filesystem::remove(one); });
 
   SetFileContent(one, "one");
@@ -385,7 +386,7 @@ TEST_F(FileMonitorTest, WatchMissingFile) {
   AutoRequired<FileMonitor> fm;
   serverContext->Initiate();
 
-  std::filesystem::wpath missing = GetTemporaryName();
+  std::filesystem::path missing = GetTemporaryName();
 
   auto watcher = fm->Watch(missing, [] (std::shared_ptr<FileWatch> fileWatch, FileWatch::State states) {});
 
@@ -397,8 +398,8 @@ TEST_F(FileMonitorTest, DISABLED_MonitorFileStateChanges) {
   AutoRequired<FileMonitor> fm;
   serverContext->Initiate();
 
-  std::filesystem::wpath original = GetTemporaryName();
-  std::filesystem::wpath renamed  = GetTemporaryName();
+  std::filesystem::path original = GetTemporaryName();
+  std::filesystem::path renamed  = GetTemporaryName();
 
   ASSERT_TRUE(SetFileContent(original, "")) << "Unable to create temporary file";
 

@@ -12,7 +12,7 @@ class FileWatchWin :
   public FileWatch
 {
 public:
-  FileWatchWin(const std::filesystem::wpath& path, const FileMonitor::t_callbackFunc& callback, DWORD dwNotifyFilter, HANDLE hDirectory);
+  FileWatchWin(const std::filesystem::path& path, const FileMonitor::t_callbackFunc& callback, DWORD dwNotifyFilter, HANDLE hDirectory);
   virtual ~FileWatchWin();
 
 private:
@@ -59,7 +59,7 @@ public:
   virtual ~FileMonitorWin();
 
   // FileMonitor overrides:
-  std::shared_ptr<FileWatch> Watch(const std::filesystem::wpath& path, const t_callbackFunc& callback, FileWatch::State states) override;
+  std::shared_ptr<FileWatch> Watch(const std::filesystem::path& path, const t_callbackFunc& callback, FileWatch::State states) override;
   int WatchCount() const override;
 
 protected:

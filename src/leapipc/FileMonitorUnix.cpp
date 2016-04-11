@@ -1,19 +1,18 @@
 // Copyright (c) 2010 - 2014 Leap Motion. All rights reserved. Proprietary and confidential.
 #include "stdafx.h"
 #include "FileMonitorUnix.h"
-
-#include <boost/filesystem/operations.hpp>
-
 #include <unistd.h>
 #include <fcntl.h>
+#include <limits.h>
 #include <poll.h>
 #include <ext/stdio_filebuf.h>
 #include <sys/inotify.h>
 #include <atomic>
+#include FILESYSTEM_HEADER
 
 using namespace leap::ipc;
 
-FileWatchUnix::FileWatchUnix(const boost::filesystem::path& path) : FileWatch(path), m_key(-1)
+FileWatchUnix::FileWatchUnix(const std::filesystem::path& path) : FileWatch(path), m_key(-1)
 {
 }
 
@@ -143,11 +142,11 @@ void FileMonitorUnix::Run()
   }
 }
 
-std::shared_ptr<FileWatch> FileMonitorUnix::Watch(const boost::filesystem::path& path,
+std::shared_ptr<FileWatch> FileMonitorUnix::Watch(const std::filesystem::path& path,
                                                   const t_callbackFunc& callback,
                                                   FileWatch::State states)
 {
-  if (!boost::filesystem::exists(path))
+  if (!std::filesystem::exists(path))
     // User is asking to watch something that doesn't exist, fail
     return std::shared_ptr<FileWatchUnix>();
 
@@ -159,7 +158,7 @@ std::shared_ptr<FileWatch> FileMonitorUnix::Watch(const boost::filesystem::path&
     mask |= IN_DELETE_SELF;
   }
   if (states & FileWatch::State::MODIFIED) {
-    if (boost::filesystem::is_directory(path)) {
+    if (std::filesystem::is_directory(path)) {
       mask |= IN_CREATE;
       mask |= IN_DELETE;
       mask |= IN_MOVE;

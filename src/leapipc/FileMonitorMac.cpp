@@ -2,8 +2,6 @@
 #include "stdafx.h"
 #include "FileMonitorMac.h"
 
-#include <boost/filesystem/operations.hpp>
-
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/event.h>
@@ -14,7 +12,7 @@ using namespace leap::ipc;
 // FileWatchMac
 //
 
-FileWatchMac::FileWatchMac(const boost::filesystem::path& path) : FileWatch(path)
+FileWatchMac::FileWatchMac(const std::filesystem::path& path) : FileWatch(path)
 {
   m_key = ::open(Path().c_str(), O_EVTONLY);
 }
@@ -89,7 +87,7 @@ void FileMonitorMac::Run()
   }
 }
 
-std::shared_ptr<FileWatch> FileMonitorMac::Watch(const boost::filesystem::path& path,
+std::shared_ptr<FileWatch> FileMonitorMac::Watch(const std::filesystem::path& path,
                                                  const t_callbackFunc& callback,
                                                  FileWatch::State states)
 {

@@ -2,7 +2,7 @@
 #pragma once
 #include "IPCListener.h"
 #include <autowiring/autowiring.h>
-#include <boost/filesystem/path.hpp>
+#include FILESYSTEM_HEADER
 
 namespace leap {
 namespace ipc {
@@ -22,7 +22,7 @@ public:
 
 private:
   // Namespace of our domain socket file
-  boost::filesystem::path m_namespace;
+  std::filesystem::path m_namespace;
   Autowired<FileMonitor> m_fileMonitor;
 
   // Pipe used to wake up the connection loop
@@ -30,11 +30,11 @@ private:
   int m_recvFd;
 
   struct IPCNamespace {
-    IPCNamespace(FileMonitor* m_fileMonitor, const boost::filesystem::path& ns, const int& sendFd);
+    IPCNamespace(FileMonitor* m_fileMonitor, const std::filesystem::path& ns, const int& sendFd);
     ~IPCNamespace(void);
 
     bool ok{ false };
-    const boost::filesystem::path ns;
+    const std::filesystem::path ns;
     const int m_socket;
     const int& m_sendFd;
     std::shared_ptr<FileWatch> m_watcher;

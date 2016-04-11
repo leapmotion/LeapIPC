@@ -2,9 +2,9 @@
 #pragma once
 #include "FileMonitor.h"
 #include <mutex>
-
 #include <map>
 #include <vector>
+#include FILESYSTEM_HEADER
 
 namespace leap {
 namespace ipc {
@@ -13,7 +13,7 @@ class FileWatchUnix :
   public FileWatch
 {
   public:
-    FileWatchUnix(const boost::filesystem::path& path);
+    FileWatchUnix(const std::filesystem::path& path);
     virtual ~FileWatchUnix();
 
   private:
@@ -31,7 +31,7 @@ class FileMonitorUnix :
 
   protected:
     // FileMonitor overrides:
-    std::shared_ptr<FileWatch> Watch(const boost::filesystem::path& path, const t_callbackFunc& callback, FileWatch::State states) override;
+    std::shared_ptr<FileWatch> Watch(const std::filesystem::path& path, const t_callbackFunc& callback, FileWatch::State states) override;
     int WatchCount() const override;
 
     // CoreThread overrides:

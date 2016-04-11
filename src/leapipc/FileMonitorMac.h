@@ -12,7 +12,7 @@ class FileWatchMac :
   public FileWatch
 {
   public:
-    FileWatchMac(const boost::filesystem::path& path);
+    FileWatchMac(const std::filesystem::path& path);
     virtual ~FileWatchMac();
 
   private:
@@ -30,7 +30,7 @@ class FileMonitorMac :
 
   protected:
     // FileMonitor overrides:
-    std::shared_ptr<FileWatch> Watch(const boost::filesystem::path& path, const t_callbackFunc& callback, FileWatch::State states) override;
+    std::shared_ptr<FileWatch> Watch(const std::filesystem::path& path, const t_callbackFunc& callback, FileWatch::State states) override;
     int WatchCount() const override;
 
     // CoreThread overrides:

@@ -9,7 +9,7 @@ using namespace leap::ipc;
 // FileWatchWin
 //
 
-FileWatchWin::FileWatchWin(const std::filesystem::wpath& path, const FileMonitor::t_callbackFunc& callback, DWORD dwNotifyFilter, HANDLE hDirectory) :
+FileWatchWin::FileWatchWin(const std::filesystem::path& path, const FileMonitor::t_callbackFunc& callback, DWORD dwNotifyFilter, HANDLE hDirectory) :
   FileWatch(path),
   m_callback(callback),
   m_dwNotifyFilter(dwNotifyFilter),
@@ -135,14 +135,14 @@ FileMonitor* FileMonitor::New(void) {
   return new FileMonitorWin();
 }
 
-std::shared_ptr<FileWatch> FileMonitorWin::Watch(const std::filesystem::wpath& path, const t_callbackFunc& callback, FileWatch::State states) {
+std::shared_ptr<FileWatch> FileMonitorWin::Watch(const std::filesystem::path& path, const t_callbackFunc& callback, FileWatch::State states) {
   try {
     if(!std::filesystem::exists(path))
       return nullptr;
   } catch (...) {
     return nullptr;
   }
-  std::filesystem::wpath directory = (std::filesystem::is_directory(path) || !path.has_parent_path()) ? path : path.parent_path();
+  std::filesystem::path directory = (std::filesystem::is_directory(path) || !path.has_parent_path()) ? path : path.parent_path();
 
   // Open the handle to the directory we were asked to watch with the
   // correct permissions so that we can actually conduct asynchronous
