@@ -40,3 +40,4 @@ leapipc.kdev4
 CTestTestfile.cmake
 *.opendb
 LeapIPCTargets.cmake
+LeapIPC.VC.db
