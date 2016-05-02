@@ -57,6 +57,14 @@ find_package(leapserial 0.3.2 REQUIRED)
 add_library(LeapIPC ${IPC_SRCS})
 target_link_libraries(LeapIPC ${IPC_LIBS} Autowiring::Autowiring LeapSerial::LeapSerial)
 
+target_include_directories(
+  LeapIPC
+  PUBLIC
+  "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>"
+  INTERFACE
+  "$<INSTALL_INTERFACE:include>"
+)
+
 install_headers(TARGET LeapIPC DESTINATION include/leapipc COMPONENT LeapIPC)
 install(TARGETS LeapIPC EXPORT LeapIPCTargets
   DESTINATION lib
