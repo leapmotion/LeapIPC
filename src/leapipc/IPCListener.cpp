@@ -7,7 +7,7 @@
 
 using namespace leap::ipc;
 
-std::string IPCTestNamespace(void) {
+std::string leap::ipc::IPCTestNamespace(void) {
   std::mt19937 rnd(std::random_device{}());
   std::stringstream randStr;
   randStr
