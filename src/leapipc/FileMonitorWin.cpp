@@ -2,6 +2,8 @@
 #include "stdafx.h"
 #include "FileMonitorWin.h"
 #include FILESYSTEM_HEADER
+#include <codecvt>
+#include <locale>
 
 using namespace leap::ipc;
 
@@ -144,11 +146,19 @@ std::shared_ptr<FileWatch> FileMonitorWin::Watch(const std::filesystem::path& pa
   }
   std::filesystem::path directory = (std::filesystem::is_directory(path) || !path.has_parent_path()) ? path : path.parent_path();
 
+  // Ugh.
+  std::wstring wpath = directory
+#if _MSC_VER >= 1900
+    .wstring();
+#else
+    .string();
+#endif
+
   // Open the handle to the directory we were asked to watch with the
   // correct permissions so that we can actually conduct asynchronous
   // read operations.
   HANDLE hFile = CreateFileW(
-    directory.string().c_str(),
+    wpath.c_str(),
     GENERIC_READ,
     FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
     nullptr,

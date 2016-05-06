@@ -12,7 +12,7 @@ public:
 
   Overlapped(Overlapped&& rhs) {
     memset(this, 0, sizeof(*this));
-    *this = rhs;
+    *static_cast<OVERLAPPED*>(this) = rhs;
   }
 
   void operator=(Overlapped&& rhs) {
@@ -23,5 +23,4 @@ public:
     if(hEvent)
       CloseHandle(hEvent);
   }
-
 };
