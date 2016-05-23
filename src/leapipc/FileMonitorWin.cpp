@@ -15,9 +15,11 @@ FileWatchWin::FileWatchWin(const std::filesystem::path& path, const FileMonitor:
   FileWatch(path),
   m_callback(callback),
   m_dwNotifyFilter(dwNotifyFilter),
-  m_hDirectory(hDirectory),
-  m_filename(path.filename())
+  m_hDirectory(hDirectory)
 {
+  std::string filename = path.filename().string();
+  m_filename.assign(filename.begin(), filename.end());
+
   memset(m_pOverlapped.get(), 0, sizeof(*m_pOverlapped));
   m_pOverlapped->hEvent = CreateEvent(nullptr, true, false, nullptr);
 }
@@ -147,11 +149,12 @@ std::shared_ptr<FileWatch> FileMonitorWin::Watch(const std::filesystem::path& pa
   std::filesystem::path directory = (std::filesystem::is_directory(path) || !path.has_parent_path()) ? path : path.parent_path();
 
   // Ugh.
-  std::wstring wpath = directory
+  std::wstring wpath;
 #if _MSC_VER >= 1900
-    .wstring();
+  wpath = directory.wstring();
 #else
-    .string();
+  auto str = directory.string();
+  wpath.assign(str.begin(), str.end());
 #endif
 
   // Open the handle to the directory we were asked to watch with the
