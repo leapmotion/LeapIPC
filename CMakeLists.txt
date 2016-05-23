@@ -68,8 +68,6 @@ include(AddPCH)
 include(ConditionalSources)
 include(InstallHeaders)
 
-get_filename_component(LEAPSERIAL_ROOT_DIR . ABSOLUTE)
-
 # All of our binaries go to one place:  The binaries output directory.  We only want to tinker
 # with this if we're building by ourselves, otherwise we just do whatever the enclosing project
 # wants us to do.
