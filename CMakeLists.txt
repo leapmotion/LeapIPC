@@ -16,7 +16,7 @@ set_standard_output_variables()
 
 # All typically required packages
 find_package(autowiring 1.0.2 REQUIRED)
-find_package(leapserial 0.3.2 REQUIRED)
+find_package(leapserial 0.4.0 REQUIRED)
 
 # We have unit test projects via googletest, they're added in the places where they are defined
 enable_testing()
