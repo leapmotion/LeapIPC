@@ -1,18 +1,15 @@
 cmake_minimum_required(VERSION 3.0)
 include(version.cmake)
-project(LeapIPC VERSION ${LeapIPC_VERSION})
+include("standard/Standard.cmake")
+standard_project(LeapIPC VERSION ${LeapIPC_VERSION})
 
 include(CTest)
 include(CheckTypeSize)
-include("standard/Standard.cmake")
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake-modules")
 include(AddPCH)
 include(ConditionalSources)
-
-# Standard calls
-set_standard_output_variables()
 
 # All typically required packages
 find_package(autowiring 1.0.2 REQUIRED)
