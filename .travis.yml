@@ -1,0 +1,70 @@
+language: cpp
+sudo: false
+
+matrix:
+  include:
+  - os: linux
+    env:
+    - _CC: gcc-4.8
+    - _CXX: g++-4.8
+    - CMAKE_URL=http://cmake.org/files/v3.4/cmake-3.4.0-Linux-i386.tar.gz
+    - AUTOWIRING_URL=https://github.com/leapmotion/autowiring/releases/download/v1.0.0/autowiring-1.0.0-Linux.tar.gz
+    - LEAPSERIAL_URL=https://github.com/leapmotion/leapserial/releases/download/v0.3.2/LeapSerial-0.3.2-Linux.tar.gz
+    - CMAKE_DIRNAME=cmake-3.4.0-Linux-i386
+    addons:
+      apt:
+        sources:
+          - boost-latest
+          - ubuntu-toolchain-r-test
+        packages:
+          - libboost-filesystem-dev
+          - gcc-4.8
+          - g++-4.8
+          - libc6-i386
+  - os: osx
+    env:
+    - _CC: clang
+    - _CXX: clang++
+    - CMAKE_URL=http://cmake.org/files/v3.4/cmake-3.4.0-Darwin-x86_64.tar.gz
+    - AUTOWIRING_URL=https://github.com/leapmotion/autowiring/releases/download/v1.0.0/autowiring-1.0.0-Darwin.tar.gz
+    - LEAPSERIAL_URL=https://github.com/leapmotion/leapserial/releases/download/v0.3.2/LeapSerial-0.3.2-Darwin.tar.gz
+    - CMAKE_DIRNAME=cmake-3.4.0-Darwin-x86_64/CMake.app/Contents
+    addons:
+      apt:
+        packages:
+          - libboost-filesystem-dev
+
+before_install:
+  # Enforce whitespace guidelines
+  - ./scripts/whitespace_check.sh
+
+  # Enforce Leap Motion copyright notice
+  - ./scripts/copyright_check.sh
+
+install:
+  # CMake 3.4
+  - pushd ~
+  - curl -L $CMAKE_URL | tar xz
+  - curl -L $AUTOWIRING_URL | tar xz
+  - curl -L $LEAPSERIAL_URL | tar xz
+  - popd
+
+before_script:
+  - export CC=$_CC
+  - export CXX=$_CXX
+  - $CXX --version
+  - export CPATH=/usr/include/c++/4.8:/usr/include/x86_64-linux-gnu/c++/4.8/:$CPATH
+  - export LD_LIBRARY_PATH=/usr/lib/gcc/x86_64-linux-gnu/4.8:$LD_LIBRARY_PATH
+
+script:
+  # Build LeapSerial, run unit tests, and install
+  - mkdir b
+  - cd b
+  - ~/$CMAKE_DIRNAME/bin/cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH:PATH=~ -DCMAKE_INSTALL_PREFIX:PATH=~/leapipc/
+  - make -j 4 || make
+  - ctest --output-on-failure --timeout 30
+  - make install > logfile || cat logfile
+  - cpack || (cat _CPack_Packages/Linux/TGZ/InstallOutput.log; exit 3)
+
+after_failure:
+  - cat Testing/Temporary/LastTest.log 2> /dev/null
