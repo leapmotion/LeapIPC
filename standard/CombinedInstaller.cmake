@@ -45,20 +45,20 @@ function(combined_installer)
     message(FATAL_ERROR "Vendor must be specified for the installer")
   endif()
   default_value(ARG_NAME ${CMAKE_PROJECT_NAME})
-  default_value(ARG_VERSION ${${ARG_NAME}_VERSION})
+
+  parse_version(ARG ${${ARG_NAME}_VERSION})
+  if(NOT ARG_VERSION)
+    message(FATAL_ERROR "Could not determine the version number for this project, pass VERSION argument")
+  endif()
+
   if(CMAKE_CONFIGURATION_TYPES)
     default_value(ARG_CONFIGS ${CMAKE_CONFIGURATION_TYPES})
   endif()
-  default_value(ARG_WIXFILE ${CMAKE_BINARY_DIR}/CMakeFiles/standard_WixFile.wxs)
+  default_value(ARG_WIXFILE "${CMAKE_BINARY_DIR}/CMakeFiles/standard_WixFile.wxs")
   default_value(ARG_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
   default_value(ARG_README "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 
   string(TOLOWER ${ARG_NAME} ARG_NAME_LOWER)
-
-  if(NOT ARG_VERSION)
-    message(FATAL_ERROR "Could not determine the version number for this project, pass VERSION argument")
-  endif()
-  parse_version(ARG_VERSION ${ARG_VERSION})
 
   # Generate a GUID if the user didn't specifically request one
   if(NOT ARG_GUID)
@@ -113,13 +113,13 @@ function(combined_installer)
       list(
         APPEND
         CPACK_INSTALL_COMMANDS
-        "${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --config ${ONE_CONFIG}"
+        "${CMAKE_COMMAND} --build \\\"${CMAKE_BINARY_DIR}\\\" --config ${ONE_CONFIG}"
         "${CMAKE_COMMAND} -DBUILD_TYPE=${ONE_CONFIG} -P \\\"${SELF}/cmake_package.cmake\\\""
       )
     endforeach()
   else()
     set(CPACK_INSTALL_COMMANDS
-      "${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}"
+      "${CMAKE_COMMAND} --build \\\"${CMAKE_BINARY_DIR}\\\""
       "${CMAKE_COMMAND} -P \\\"${SELF}/cmake_package.cmake\\\""
     )
   endif()
