@@ -1,3 +1,5 @@
+#include <iostream>
+
 // Copyright (C) 2012-2016 Leap Motion, Inc. All rights reserved.
 #include "stdafx.h"
 #include "IPCClientUnix.h"
@@ -42,19 +44,23 @@ std::shared_ptr<IPCEndpoint> IPCClientUnix::Connect(std::chrono::microseconds dt
 #else
   struct sockaddr_un addr = {0};
   addr.sun_family = AF_LOCAL;
-  m_namespace.copy(addr.sun_path, sizeof(addr.sun_path) - 1);
+  addr.sun_path[0] = '\0';
+  m_namespace.copy(addr.sun_path+1, m_namespace.length());
 #endif
 
   auto limit = std::chrono::steady_clock::now() + dt;
   while (!ShouldStop()) {
     int socket = ::socket(domain, SOCK_STREAM, 0);
 
-    if (::connect(socket, (struct sockaddr*)&addr, sizeof(addr)) != -1) {
+    std::cout << "Calling connect w/ namespace: " << m_namespace << std::endl;
+    if (::connect(socket, (struct sockaddr*)&addr, sizeof(addr.sun_family) + m_namespace.length() + 1) != -1) {
+
+     std::cout << "Connect SUCCEEDED" << std::endl;
       if (socket >= 0)
         // Success, break out here
         return std::make_shared<IPCEndpointUnix>(socket);
     }
-
+    std::cout << "Unsuccessful, calling ::shutdown" << std::endl;
     // Unsuccessful, kill this socket, we will need to regenerate it
     ::shutdown(socket, SHUT_RDWR);
     ::close(socket);
