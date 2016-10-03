@@ -1,4 +1,5 @@
 // Copyright (C) 2012-2016 Leap Motion, Inc. All rights reserved.
+#include <iostream>
 #include "stdafx.h"
 #include "IPCEndpointUnix.h"
 
@@ -47,10 +48,16 @@ std::streamsize IPCEndpointUnix::ReadRaw(void* buffer, std::streamsize size) {
     return -1;
   }
 #endif
-  return ::recv(m_socket, buffer, size, MSG_NOSIGNAL);
+  std::streamsize readBytes = ::recv(m_socket, buffer, size, MSG_NOSIGNAL);
+  if (readBytes > 0) {
+     std::string str((char*)buffer, int(readBytes));
+     std::cout << "IPCEndpointUnix received ReadRaw() " << int(readBytes) << " bytes: " << str << std::endl;
+  }
 }
 
 bool IPCEndpointUnix::WriteRaw(const void* pBuf, std::streamsize nBytes) {
+  std::string str((char*)pBuf, int(nBytes));
+  std::cout << "IPCEndpointUnix sent WriteRaw() " << int(nBytes) << " bytes: " << str << std::endl;
   return (nBytes == ::send(m_socket, pBuf, nBytes, MSG_NOSIGNAL));
 }
 
