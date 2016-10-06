@@ -53,6 +53,7 @@ std::streamsize IPCEndpointUnix::ReadRaw(void* buffer, std::streamsize size) {
      std::string str((char*)buffer, int(readBytes));
      std::cout << "IPCEndpointUnix received ReadRaw() " << int(readBytes) << " bytes: " << str << std::endl;
   }
+  return readBytes;
 }
 
 bool IPCEndpointUnix::WriteRaw(const void* pBuf, std::streamsize nBytes) {
