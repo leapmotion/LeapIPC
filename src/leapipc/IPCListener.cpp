@@ -19,7 +19,8 @@ std::string leap::ipc::IPCTestNamespace(void) {
   return randStr.str();
 }
 
-IPCListener::IPCListener(void)
+IPCListener::IPCListener(void) :
+  CoreThread("IPCListener")
 {
 }
 
