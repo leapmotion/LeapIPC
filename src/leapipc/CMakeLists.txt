@@ -22,7 +22,6 @@ add_windows_sources(IPC_SRCS
   IPCEndpointWin.cpp
   IPCListenerWin.h
   IPCListenerWin.cpp
-  IPCRelay.h
   NamedPipeWin.h
   NamedPipeWin.cpp
   NamedPipeStatusBlockWin.h
