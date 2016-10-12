@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.4)
 include(version.cmake)
 include("standard/Standard.cmake")
 standard_project(LeapIPC VERSION ${LeapIPC_VERSION})
