@@ -5,7 +5,6 @@
 #include "IPCEndpointWin.h"
 #include "NamedPipeWin.h"
 #include <autowiring/Autowired.h>
-#include <autowiring/BasicThreadStateBlock.h>
 
 using namespace leap::ipc;
 

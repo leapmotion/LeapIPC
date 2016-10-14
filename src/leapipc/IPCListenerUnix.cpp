@@ -3,7 +3,6 @@
 #include "IPCListenerUnix.h"
 #include "FileMonitor.h"
 #include "IPCEndpointUnix.h"
-#include <autowiring/BasicThreadStateBlock.h>
 #include <autowiring/ContextEnumerator.h>
 
 #include <poll.h>
