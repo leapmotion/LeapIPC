@@ -420,7 +420,7 @@ const IPCEndpoint::Header& IPCEndpoint::ReadMessageHeader(void) {
     m_lastHeader = {};
 
   if(sizeof(m_lastHeader) < m_lastHeader.Size()) {
-    auto nSkip = sizeof(m_lastHeader) - m_lastHeader.Size();
+    auto nSkip = m_lastHeader.Size() - sizeof(m_lastHeader);
     if(m_drain.size() < nSkip)
       m_drain.resize(nSkip);
     ReadRawN(m_drain.data(), nSkip);
