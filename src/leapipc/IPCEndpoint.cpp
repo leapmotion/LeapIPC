@@ -442,5 +442,7 @@ std::streamsize IPCEndpoint::ReadPayload(void* pBuf, size_t ncb) {
   auto retVal = ReadRaw(pBuf, ncb);
   if (0 < retVal)
     m_nRemain -= (size_t)retVal;
+  else
+    Close(Reason::ConnectionLost);
   return retVal;
 }
