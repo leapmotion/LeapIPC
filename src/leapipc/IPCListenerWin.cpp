@@ -4,6 +4,7 @@
 #include "DefaultSecurityDescriptor.h"
 #include "IPCEndpointWin.h"
 #include "NamedPipeWin.h"
+#include <autowiring/BasicThreadStateBlock.h>
 #include <autowiring/Autowired.h>
 
 using namespace leap::ipc;
