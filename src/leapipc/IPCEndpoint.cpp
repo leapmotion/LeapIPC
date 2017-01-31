@@ -413,7 +413,7 @@ const IPCEndpoint::Header& IPCEndpoint::ReadMessageHeader(void) {
   auto ncb = ReadRaw(&m_lastHeader, sizeof(m_lastHeader));
   if (ncb <= 0) {
     // we are being closed
-    Close(Reason::ConnectionLost);
+    Close(Reason::ReadFailure);
   }
   if (sizeof(m_lastHeader) == ncb) {
     m_nRemain = m_lastHeader.PayloadSize();
@@ -443,6 +443,6 @@ std::streamsize IPCEndpoint::ReadPayload(void* pBuf, size_t ncb) {
   if (0 < retVal)
     m_nRemain -= (size_t)retVal;
   else
-    Close(Reason::ConnectionLost);
+    Close(Reason::ReadFailure);
   return retVal;
 }
