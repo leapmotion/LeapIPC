@@ -411,6 +411,10 @@ const IPCEndpoint::Header& IPCEndpoint::ReadMessageHeader(void) {
     throw std::runtime_error("Attempted to read a message header when payload bytes remain");
 
   auto ncb = ReadRaw(&m_lastHeader, sizeof(m_lastHeader));
+  if (ncb <= 0) {
+    // we are being closed
+    Close(Reason::ConnectionLost);
+  }
   if (sizeof(m_lastHeader) == ncb) {
     m_nRemain = m_lastHeader.PayloadSize();
     if (m_lastHeader.magic1 != 0x64 || m_lastHeader.magic2 != 0x37)
