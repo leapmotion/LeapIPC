@@ -199,6 +199,7 @@ public:
 
 protected:
   // Low-level raw read/write functions (platform specific)
+  // This is a blocking call
   virtual std::streamsize ReadRaw(void* buffer, std::streamsize size) = 0;
   virtual bool WriteRaw(const void* pBuf, std::streamsize nBytes) = 0;
 

@@ -411,6 +411,10 @@ const IPCEndpoint::Header& IPCEndpoint::ReadMessageHeader(void) {
     throw std::runtime_error("Attempted to read a message header when payload bytes remain");
 
   auto ncb = ReadRaw(&m_lastHeader, sizeof(m_lastHeader));
+  if (ncb <= 0) {
+    // we are being closed
+    Close(Reason::ReadFailure);
+  }
   if (sizeof(m_lastHeader) == ncb) {
     m_nRemain = m_lastHeader.PayloadSize();
     if (m_lastHeader.magic1 != 0x64 || m_lastHeader.magic2 != 0x37)
@@ -420,7 +424,7 @@ const IPCEndpoint::Header& IPCEndpoint::ReadMessageHeader(void) {
     m_lastHeader = {};
 
   if(sizeof(m_lastHeader) < m_lastHeader.Size()) {
-    auto nSkip = sizeof(m_lastHeader) - m_lastHeader.Size();
+    auto nSkip = m_lastHeader.Size() - sizeof(m_lastHeader);
     if(m_drain.size() < nSkip)
       m_drain.resize(nSkip);
     ReadRawN(m_drain.data(), nSkip);
@@ -438,5 +442,7 @@ std::streamsize IPCEndpoint::ReadPayload(void* pBuf, size_t ncb) {
   auto retVal = ReadRaw(pBuf, ncb);
   if (0 < retVal)
     m_nRemain -= (size_t)retVal;
+  else
+    Close(Reason::ReadFailure);
   return retVal;
 }
