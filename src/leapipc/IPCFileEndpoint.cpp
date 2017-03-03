@@ -8,8 +8,8 @@ using namespace leap::ipc;
 IPCFileEndpoint::IPCFileEndpoint(const std::string & fileName, bool read, bool write)
 {
   std::ios_base::openmode mode = std::ios::binary;
-  mode |= read ? std::ios::in : 0;
-  mode |= write ? std::ios::out : 0;
+  if (read) mode |= std::ios::in;
+  if (write) mode |= std::ios::out;
   m_file.open(fileName, mode);
   if (!m_file.is_open())
     throw std::runtime_error("Failed to open file");
