@@ -7,7 +7,7 @@ using namespace leap::ipc;
 
 IPCFileEndpoint::IPCFileEndpoint(const std::string & fileName, bool read, bool write)
 {
-  int mode = std::ios::binary;
+  std::ios_base::openmode mode = std::ios::binary;
   mode |= read ? std::ios::in : 0;
   mode |= write ? std::ios::out : 0;
   m_file.open(fileName, mode);
