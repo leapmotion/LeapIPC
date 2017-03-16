@@ -1,13 +1,13 @@
 // Copyright (C) 2012-2016 Leap Motion, Inc. All rights reserved.
 #pragma once
-#include "IPCEndpoint.h"
+#include "RawIPCEndpoint.h"
 #include <fstream>
 
 namespace leap {
 namespace ipc {
 
 class IPCFileEndpoint:
-  public IPCEndpoint
+  public RawIPCEndpoint
 {
 public:
   IPCFileEndpoint(const std::string & fileName, bool read, bool write);

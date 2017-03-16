@@ -10,6 +10,9 @@ set(IPC_SRCS
   IPCListener.h
   IPCListener.cpp
   MessageBuffers.h
+  RawIPCEndpoint.h
+  CircularBufferEndpoint.h
+  CircularBufferEndpoint.cpp
 )
 
 add_windows_sources(IPC_SRCS
