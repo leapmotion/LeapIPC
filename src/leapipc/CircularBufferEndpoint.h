@@ -36,7 +36,7 @@ private:
   void ReadUnsafe(void* buffer, size_t size);
   void WriteUnsafe(const void* buffer, size_t size);
 
-  void doubleSize(void);
+  void resize(size_t newCapacity);
 
 public:
   // IPCEndpoint overrides:

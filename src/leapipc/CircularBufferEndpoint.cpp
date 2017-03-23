@@ -23,10 +23,10 @@ size_t CircularBufferEndpoint::readAvailable() {
     return m_capacity - (m_readIdx - m_writeIdx);
 }
 
-void CircularBufferEndpoint::doubleSize(void)
+void CircularBufferEndpoint::resize(size_t newCapacity)
 {
   size_t n = readAvailable();
-  uint8_t* newbuf = new uint8_t[m_capacity * 2];
+  uint8_t* newbuf = new uint8_t[newCapacity];
 
   // copy to new buffer
   ReadUnsafe(newbuf, n);
@@ -35,7 +35,7 @@ void CircularBufferEndpoint::doubleSize(void)
   m_data = newbuf;
   m_readIdx = 0;
   m_writeIdx = n;
-  m_capacity *= 2;
+  m_capacity = newCapacity;
 }
 
 void CircularBufferEndpoint::ReadUnsafe(void* buffer, size_t size) {
@@ -73,8 +73,8 @@ std::streamsize CircularBufferEndpoint::ReadRaw(void* buffer, std::streamsize si
       auto read = readAvailable();
       auto write = m_capacity - read;
       if (m_lastReadSize > read && m_lastWriteSize > write) {
-        doubleSize();
-        return true;
+        resize(m_lastReadSize + m_lastWriteSize);
+        read = m_writeIdx;
       }
       return read >= m_lastReadSize;
     });
@@ -98,8 +98,8 @@ bool CircularBufferEndpoint::WriteRaw(const void* pBuf, std::streamsize nBytes)
       auto read = readAvailable();
       auto write = m_capacity - read;
       if (m_lastReadSize > read && m_lastWriteSize > write) {
-        doubleSize();
-        return true;
+        resize(m_lastReadSize + m_lastWriteSize);
+        write = m_capacity - m_writeIdx;
       }
       return write > m_lastWriteSize; // must be strictly greater to avoid ambiguous m_writeIdx == m_readIdx state
     });
