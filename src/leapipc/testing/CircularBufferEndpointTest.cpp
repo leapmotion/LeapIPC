@@ -58,7 +58,7 @@ TEST_F(CircularBufferEndpointTest, WriteReadSequence)
   reader.join();
 }
 
-TEST_F(CircularBufferEndpointTest, DoubleSize)
+TEST_F(CircularBufferEndpointTest, IncreaseSize)
 {
   auto cbuf = std::make_shared<CircularBufferEndpoint>(16);
 
