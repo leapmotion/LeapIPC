@@ -20,9 +20,7 @@ std::streamsize CircularBufferEndpoint::ReadRaw(void* buffer, std::streamsize si
       auto read = readAvailable();
       const auto write = m_capacity - read;
       if (m_lastReadSize > read && m_lastWriteSize > write) {
-        resizeUnsafe(std::max<size_t>(m_lastReadSize + m_lastWriteSize, m_capacity * 2));
-        read = m_writeIdx;
-        m_dataCV.notify_one(); // Fix hang that was occurring when this path was triggered
+        m_dataCV.notify_one(); // notify the writing thread so it can resize and write
       }
       return read >= m_lastReadSize;
     });
