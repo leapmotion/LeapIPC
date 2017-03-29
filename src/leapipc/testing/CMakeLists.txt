@@ -8,6 +8,7 @@ set(LeapIPCTest_SRCS
   IPCFileEndpointTest.cpp
   IPCTestUtils.h
   IPCTestUtils.cpp
+  CircularBufferEndpointTest.cpp
 )
 
 add_pch(LeapIPCTest_SRCS "stdafx.h" "stdafx.cpp")
