@@ -63,7 +63,6 @@ void FileMonitorUnix::Run()
   // Stream wrapper for our file descriptor:
   const size_t BUF_SIZE = sizeof(struct inotify_event) + NAME_MAX + 1;
   char buf[BUF_SIZE];
-  char* readPtr = buf;
 
   while (!ShouldStop()) {
     struct pollfd fds[2] = {
@@ -80,19 +79,13 @@ void FileMonitorUnix::Run()
       // Event occurred on something other than the first fd, also end here
       break;
 
-    int readBytes = read(m_inotify, buf, BUF_SIZE);
-    readPtr = buf;
+    const int readBytes = ::read(m_inotify, buf, BUF_SIZE);
 
     // Process events
-    while(readPtr < buf + BUF_SIZE) {
-      // Read the inotify_event header first
-      static_assert(sizeof(inotify_event) == 16, "inotify_event header size unexpected");
-      if( readBytes - (readPtr - buf) < sizeof(inotify_event))
-        break;
-
+    char* readPtr = buf;
+    while (readPtr + sizeof(inotify_event) <= buf + readBytes) {
       inotify_event* event = reinterpret_cast<inotify_event*>(readPtr);
-      readPtr += sizeof(inotify_event);
-      readPtr += event->len;
+      readPtr += sizeof(inotify_event) + event->len;
 
       // Transform the event mask into a state:
       FileWatch::State states = FileWatch::State::NONE;
