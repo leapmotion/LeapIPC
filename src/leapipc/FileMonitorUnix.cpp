@@ -5,7 +5,6 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <poll.h>
-#include <ext/stdio_filebuf.h>
 #include <sys/inotify.h>
 #include <atomic>
 #include FILESYSTEM_HEADER
@@ -62,82 +61,73 @@ void FileMonitorUnix::Run()
     return;
 
   // Stream wrapper for our file descriptor:
-  char buf[sizeof(struct inotify_event) + NAME_MAX + 1];
-  __gnu_cxx::stdio_filebuf<char> inotify(m_inotify, std::ios::in | std::ios::binary);
-  inotify.pubsetbuf(buf, sizeof(buf));
-
-  std::istream is(&inotify);
-
-  // Prior bytes to be skipped:
-  size_t nPriorSkip = 0;
+  const size_t BUF_SIZE = sizeof(struct inotify_event) + NAME_MAX + 1;
+  char buf[BUF_SIZE];
 
   while (!ShouldStop()) {
-    if (!inotify.in_avail()) {
-      struct pollfd fds[2] = {
-        {m_inotify, POLLIN, 0},
-        {m_pipes[0], POLLIN, 0}
-      };
+    struct pollfd fds[2] = {
+      {m_inotify, POLLIN, 0},
+      {m_pipes[0], POLLIN, 0}
+    };
 
-      // No more bytes available, wait for something to happen
-      if (poll(fds, sizeof(fds) / sizeof(fds[0]), -1) <= 0)
-        // Something went wrong in polling, maybe we were told to stop, end here
-        break;
-
-      if (!(fds[0].revents & POLLIN))
-        // Event occurred on something other than the first fd, also end here
-        break;
-    }
-
-    // Skip whatever prior bytes needed to be ignored:
-    is.ignore(nPriorSkip);
-
-    // Read the inotify_event header first
-    struct inotify_event event;
-    static_assert(sizeof(event) == 16, "inotify_event header size unexpected");
-    if (!is.read((char*) &event, sizeof(event)))
+    // wait for something to happen
+    if (poll(fds, sizeof(fds) / sizeof(fds[0]), -1) <= 0)
+      // Something went wrong in polling, maybe we were told to stop, end here
       break;
-    nPriorSkip = event.len;
 
-    // Transform the event mask into a state:
-    FileWatch::State states = FileWatch::State::NONE;
-    if (event.mask & IN_MOVE_SELF) {
-      states = states | FileWatch::State::RENAMED;
-    }
-    if (event.mask & IN_DELETE_SELF) {
-      states = states | FileWatch::State::DELETED;
-    }
-    if (event.mask & (IN_MODIFY | IN_CREATE | IN_DELETE | IN_MOVE | IN_ATTRIB)) {
-      if ((event.mask & IN_MOVED_TO) != IN_MOVED_TO || !event.cookie || event.cookie != m_moveCookie) {
-        if (event.mask & IN_MOVED_FROM) {
-          m_moveCookie = event.cookie;
-        }
-        states = states | FileWatch::State::MODIFIED;
+    if (!(fds[0].revents & POLLIN))
+      // Event occurred on something other than the first fd, also end here
+      break;
+
+    const int readBytes = ::read(m_inotify, buf, BUF_SIZE);
+
+    // Process events
+    char* readPtr = buf;
+    while (readPtr + sizeof(inotify_event) <= buf + readBytes) {
+      inotify_event* event = reinterpret_cast<inotify_event*>(readPtr);
+      readPtr += sizeof(inotify_event) + event->len;
+
+      // Transform the event mask into a state:
+      FileWatch::State states = FileWatch::State::NONE;
+      if (event->mask & IN_MOVE_SELF) {
+        states = states | FileWatch::State::RENAMED;
       }
-    }
-    if (states == FileWatch::State::NONE)
-      // Who cares, then.  Just circle around.
-      continue;
-
-    // Container of watchers we will need to notify:
-    std::vector<std::shared_ptr<Watcher>> toBeNotified;
-
-    // Try to find an interested watcher:
-    {
-      std::lock_guard<std::mutex> lock(m_mutex);
-      auto found = m_watchers.find(event.wd);
-      if (found != m_watchers.end())
-        toBeNotified = found->second;
-    }
-
-    for (auto& cur : toBeNotified) {
-      auto fileWatch = cur->fileWatch.lock();
-      if (!fileWatch)
-        // Already expired, circle around
+      if (event->mask & IN_DELETE_SELF) {
+        states = states | FileWatch::State::DELETED;
+      }
+      if (event->mask & (IN_MODIFY | IN_CREATE | IN_DELETE | IN_MOVE | IN_ATTRIB)) {
+        if ((event->mask & IN_MOVED_TO) != IN_MOVED_TO || !event->cookie || event->cookie != m_moveCookie) {
+          if (event->mask & IN_MOVED_FROM) {
+            m_moveCookie = event->cookie;
+          }
+          states = states | FileWatch::State::MODIFIED;
+        }
+      }
+      if (states == FileWatch::State::NONE)
+        // Who cares, then.  Just circle around.
         continue;
 
-      try {
-        cur->callback(fileWatch, states);
-      } catch (...) {}
+      // Container of watchers we will need to notify:
+      std::vector<std::shared_ptr<Watcher>> toBeNotified;
+
+        // Try to find an interested watcher:
+        {
+          std::lock_guard<std::mutex> lock(m_mutex);
+          auto found = m_watchers.find(event->wd);
+          if (found != m_watchers.end())
+            toBeNotified = found->second;
+        }
+
+        for (auto& cur : toBeNotified) {
+          auto fileWatch = cur->fileWatch.lock();
+          if (!fileWatch)
+            // Already expired, circle around
+            continue;
+
+          try {
+            cur->callback(fileWatch, states);
+          } catch (...) {}
+      }
     }
   }
 }
