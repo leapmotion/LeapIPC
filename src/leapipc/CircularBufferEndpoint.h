@@ -11,7 +11,7 @@ class CircularBufferEndpoint :
 {
 public:
   explicit CircularBufferEndpoint(size_t bufferSize);
-  ~CircularBufferEndpoint(void) = default;
+  ~CircularBufferEndpoint(void);
 
   // IPCEndpoint overrides:
   std::streamsize ReadRaw(void* buffer, std::streamsize size) override;

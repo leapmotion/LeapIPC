@@ -386,8 +386,8 @@ bool IPCEndpoint::WriteMessageComplete(uint32_t channel) {
 bool IPCEndpoint::ReadRawN(void* buf, std::streamsize size) {
   uint8_t* pCur = static_cast<uint8_t*>(buf);
   while (size) {
-    auto nRead = ReadRaw(pCur, size);
-    if(nRead < 0)
+    const auto nRead = ReadRaw(pCur, size);
+    if(nRead <= 0)
       return false;
     pCur += nRead;
     size -= nRead;
@@ -424,7 +424,7 @@ const IPCEndpoint::Header& IPCEndpoint::ReadMessageHeader(void) {
     m_lastHeader = {};
 
   if(sizeof(m_lastHeader) < m_lastHeader.Size()) {
-    auto nSkip = m_lastHeader.Size() - sizeof(m_lastHeader);
+    const auto nSkip = m_lastHeader.Size() - sizeof(m_lastHeader);
     if(m_drain.size() < nSkip)
       m_drain.resize(nSkip);
     ReadRawN(m_drain.data(), nSkip);
@@ -439,8 +439,8 @@ std::streamsize IPCEndpoint::ReadPayload(void* pBuf, size_t ncb) {
   if (!ncb)
     return 0;
 
-  auto retVal = ReadRaw(pBuf, ncb);
-  if (0 < retVal)
+  const auto retVal = ReadRaw(pBuf, ncb);
+  if (retVal > 0)
     m_nRemain -= (size_t)retVal;
   else
     Close(Reason::ReadFailure);
