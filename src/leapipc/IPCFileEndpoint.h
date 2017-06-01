@@ -10,16 +10,11 @@ class IPCFileEndpoint:
   public RawIPCEndpoint
 {
 public:
-  IPCFileEndpoint(const std::string & fileName, bool read, bool write);
+  IPCFileEndpoint(const std::string& fileName, bool read, bool write);
   ~IPCFileEndpoint(void);
 
 private:
   std::fstream m_file;
-
-  /// <summary>
-  /// Simulate EOF behavior when we are done.
-  /// </summary>
-  int Done(Reason reason);
 
 public:
   // IPCEndpoint overrides:

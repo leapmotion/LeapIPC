@@ -11,6 +11,10 @@ CircularBufferEndpoint::CircularBufferEndpoint(size_t bufferSize) :
 {
 }
 
+CircularBufferEndpoint::~CircularBufferEndpoint(void) {
+  Abort(Reason::Unspecified);
+}
+
 std::streamsize CircularBufferEndpoint::ReadRaw(void* buffer, std::streamsize size)
 {
   {
@@ -22,8 +26,10 @@ std::streamsize CircularBufferEndpoint::ReadRaw(void* buffer, std::streamsize si
       if (m_lastReadSize > read && m_lastWriteSize > write) {
         m_dataCV.notify_one(); // notify the writing thread so it can resize and write
       }
-      return read >= m_lastReadSize;
+      return read >= m_lastReadSize || IsClosed();
     });
+    if (IsClosed())
+      return 0;
 
     // there are 'size' bytes available in the buffer
     readUnsafe(buffer, size);
@@ -47,8 +53,10 @@ bool CircularBufferEndpoint::WriteRaw(const void* pBuf, std::streamsize nBytes)
         resizeUnsafe(std::max<size_t>(m_lastReadSize + m_lastWriteSize, m_capacity * 2));
         write = m_capacity - m_writeIdx;
       }
-      return write > m_lastWriteSize; // must be strictly greater to avoid ambiguous m_writeIdx == m_readIdx state
+      return write > m_lastWriteSize || IsClosed(); // must be strictly greater to avoid ambiguous m_writeIdx == m_readIdx state
     });
+    if (IsClosed())
+      return false;
 
     // the data fits in the buffer so we copy it
     writeUnsafe(pBuf, nBytes);
@@ -61,6 +69,8 @@ bool CircularBufferEndpoint::WriteRaw(const void* pBuf, std::streamsize nBytes)
 }
 
 bool CircularBufferEndpoint::Abort(Reason reason) {
+  Close(reason);
+  m_dataCV.notify_all();
   return true;
 }
 

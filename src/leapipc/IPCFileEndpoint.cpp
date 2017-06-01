@@ -5,7 +5,7 @@
 
 using namespace leap::ipc;
 
-IPCFileEndpoint::IPCFileEndpoint(const std::string & fileName, bool read, bool write)
+IPCFileEndpoint::IPCFileEndpoint(const std::string& fileName, bool read, bool write)
 {
   std::ios_base::openmode mode = std::ios::binary;
   if (read) mode |= std::ios::in;
@@ -17,14 +17,14 @@ IPCFileEndpoint::IPCFileEndpoint(const std::string & fileName, bool read, bool w
 
 IPCFileEndpoint::~IPCFileEndpoint(void)
 {
-  if (m_file.is_open())
-    m_file.close();
+  Abort(Reason::Unspecified);
 }
 
 std::streamsize IPCFileEndpoint::ReadRaw(void* buffer, std::streamsize size) {
-  if (m_file.eof())
-    return Done(Reason::UserClosed);
-
+  if (m_file.eof()) {
+    // On the first call, return 0 (EOF). Subsequent calls, return -1 (error).
+    return Abort(Reason::UserClosed) ? 0 : -1;
+  }
   m_file.read((char*)buffer, size);
   return m_file.gcount();
 }
@@ -37,14 +37,10 @@ bool IPCFileEndpoint::WriteRaw(const void* pBuf, std::streamsize nBytes) {
 }
 
 bool IPCFileEndpoint::Abort(Reason reason) {
-  if (m_file.is_open()) {
-    m_file.close();
-    return true;
+  if (!m_file.is_open()) {
+    return false;
   }
-  return false;
-}
-
-// On the first call, return 0 (EOF). Subsequent calls, return -1 (error).
-int IPCFileEndpoint::Done(Reason reason) {
-  return Abort(reason) ? 0 : -1;
+  m_file.close();
+  Close(reason);
+  return true;
 }
