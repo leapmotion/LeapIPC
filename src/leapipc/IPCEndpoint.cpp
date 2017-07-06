@@ -432,6 +432,63 @@ const IPCEndpoint::Header& IPCEndpoint::ReadMessageHeader(void) {
   return m_lastHeader;
 }
 
+const IPCEndpoint::Header& IPCEndpoint::SyncMessageHeader(void) {
+  uint8_t byte = 0, bitfield = 0;
+  std::streamsize offset = 0;
+  while (offset < sizeof(m_lastHeader)) {
+    if (ReadRaw(&byte, sizeof(byte)) <= 0) {
+      Close(Reason::ReadFailure);
+      m_lastHeader = {};
+      return m_lastHeader;
+    }
+    switch (offset) {
+    case 0:
+      if (byte == 0x64) {
+        offset = 1;
+      }
+      break;
+    case 1:
+      if (byte == 0x37) {
+        offset = 2;
+      } else {
+        offset = 0;
+      }
+      break;
+    case 2:
+      bitfield = byte;
+      offset = 3;
+      break;
+    case 3:
+      if (static_cast<size_t>(byte) == sizeof(m_lastHeader)) {
+        m_lastHeader.magic1 = 0x64;
+        m_lastHeader.magic2 = 0x37;
+        reinterpret_cast<uint8_t*>(&m_lastHeader)[2] = bitfield;
+        m_lastHeader.size = byte;
+        const std::streamsize remaining = sizeof(m_lastHeader) - 4;
+        m_lastHeader.payloadLength = 0;
+        if (ReadRaw(reinterpret_cast<uint8_t*>(&m_lastHeader) + 4, remaining) == remaining) {
+          m_nRemain = m_lastHeader.PayloadSize();
+          offset += 1 + remaining; // All good!
+        } else {
+          Close(Reason::ReadFailure);
+          m_lastHeader = {};
+          return m_lastHeader;
+        }
+      } else if (bitfield == 0x64 && byte == 0x37) {
+        offset = 2;
+      } else if (byte == 0x64) {
+        offset = 1;
+      } else {
+        offset = 0;
+      }
+      break;
+    default:
+      break;
+    }
+  }
+  return m_lastHeader;
+}
+
 std::streamsize IPCEndpoint::ReadPayload(void* pBuf, size_t ncb) {
   // Bounds and trivial return check:
   if (ncb > m_nRemain)
