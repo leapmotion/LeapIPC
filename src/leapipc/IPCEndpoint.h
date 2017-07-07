@@ -309,6 +309,15 @@ public:
   const Header& ReadMessageHeader(void);
 
   /// <summary>
+  /// Read the next message header in the stream, searching for header if necessary
+  /// </summary>
+  /// The returned header is used to determine how many bytes to read in a subsequent call to
+  /// ReadPayload.  It is an error to call this routine if any bytes remain to be read from the
+  /// last message.
+  /// </returns>
+  const Header& SyncMessageHeader(void);
+
+  /// <summary>
   /// Reads the payload from the most recently received message header
   /// </summary>
   /// <returns>The the number of bytes actually read</returns>
