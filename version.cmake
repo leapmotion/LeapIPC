@@ -1,1 +1,1 @@
-set(LeapIPC_VERSION 0.1.5)
+set(LeapIPC_VERSION 0.1.6)
