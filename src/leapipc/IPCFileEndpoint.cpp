@@ -31,6 +31,7 @@ std::streamsize IPCFileEndpoint::ReadRaw(void* buffer, std::streamsize size) {
 
 bool IPCFileEndpoint::WriteRaw(const void* pBuf, std::streamsize nBytes) {
   m_file.write((char*)pBuf, nBytes);
+  m_file.flush();
   if (m_file.bad())
     return false;
   return true;
