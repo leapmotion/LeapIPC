@@ -31,8 +31,6 @@ add_windows_sources(IPC_SRCS
   NamedPipeWin.cpp
   NamedPipeStatusBlockWin.h
   NamedPipeStatusBlockWin.cpp
-  IPCBulkUsbEndpointWin.h
-  IPCBulkUsbEndpointWin.cpp
   Overlapped.h
 )
 
@@ -53,6 +51,8 @@ add_posix_sources(IPC_SRCS
   IPCEndpointUnix.cpp
   IPCListenerUnix.h
   IPCListenerUnix.cpp
+  IPCBulkUsbEndpointUnix.h
+  IPCBulkUsbEndpointUnix.cpp
 )
 
 add_pch(IPC_SRCS "stdafx.h" "stdafx.cpp")
