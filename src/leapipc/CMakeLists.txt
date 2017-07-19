@@ -31,6 +31,8 @@ add_windows_sources(IPC_SRCS
   NamedPipeWin.cpp
   NamedPipeStatusBlockWin.h
   NamedPipeStatusBlockWin.cpp
+  IPCBulkUsbEndpointWin.h
+  IPCBulkUsbEndpointWin.cpp
   Overlapped.h
 )
 
