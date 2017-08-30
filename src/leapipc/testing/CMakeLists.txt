@@ -5,7 +5,6 @@ set(LeapIPCTest_SRCS
   IPCListenerTest.cpp
   IPCMessagingTest.cpp
   IPCShutdownTest.cpp
-  IPCFileEndpointTest.cpp
   IPCTestUtils.h
   IPCTestUtils.cpp
   CircularBufferEndpointTest.cpp

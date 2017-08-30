@@ -5,8 +5,6 @@ set(IPC_SRCS
   IPCClientConnector.cpp
   IPCEndpoint.h
   IPCEndpoint.cpp
-  IPCFileEndpoint.h
-  IPCFileEndpoint.cpp
   IPCListener.h
   IPCListener.cpp
   MessageBuffers.h
