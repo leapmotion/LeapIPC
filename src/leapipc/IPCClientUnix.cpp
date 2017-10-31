@@ -45,7 +45,8 @@ std::shared_ptr<IPCEndpoint> IPCClientUnix::Connect(std::chrono::microseconds dt
   m_namespace.copy(addr.sun_path, sizeof(addr.sun_path) - 1);
 #endif
 
-  auto limit = std::chrono::steady_clock::now() + dt;
+  const auto limit = std::chrono::steady_clock::now() + dt;
+  int fn_2 = 1, fn_1 = 0, delay = 0;
   while (!ShouldStop()) {
     int socket = ::socket(domain, SOCK_STREAM, 0);
 
@@ -59,32 +60,28 @@ std::shared_ptr<IPCEndpoint> IPCClientUnix::Connect(std::chrono::microseconds dt
     ::shutdown(socket, SHUT_RDWR);
     ::close(socket);
 
-    // Connection failed. Sleep for up to 250 msec before trying again -- FIXME
+
+    // Connection failed. Sleep before trying again...
     std::chrono::nanoseconds sleepTime;
     if (std::chrono::microseconds::zero() <= dt) {
-      auto now = std::chrono::steady_clock::now();
+      const auto now = std::chrono::steady_clock::now();
       if (limit < now)
         break;
       sleepTime =
         std::min<std::chrono::nanoseconds>(
-          std::chrono::milliseconds(250),
+          std::chrono::milliseconds(delay),
           limit - now
         );
+      if (delay < 233) {
+        delay = fn_2 + fn_1; // Use Fibonacci numbers for the delay
+        fn_2 = fn_1;
+        fn_1 = delay;
+      }
     }
     else
-      sleepTime = std::chrono::milliseconds(250);
+      sleepTime = std::chrono::milliseconds(delay);
 
-    // Use the CoreRunnable condition variable to implement ThreadSleep
-    // TODO:  Autowiring 0.7.4 pulls ThreadSleep into CoreRunnable, we should change this
-    // to call that method once 0.7.4 is released.
-    std::unique_lock<std::mutex> lk(m_lock);
-    m_cv.wait_for(
-      lk,
-      sleepTime,
-      [this] {
-        return ShouldStop();
-      }
-    );
+    ThreadSleep(sleepTime);
   }
 
   return nullptr;
