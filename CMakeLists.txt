@@ -12,8 +12,8 @@ include(AddPCH)
 include(ConditionalSources)
 
 # All typically required packages
-find_package(autowiring 1.0.4 REQUIRED)
-find_package(leapserial 0.5.0 REQUIRED)
+find_package(autowiring 1.0.5 EXACT REQUIRED)
+find_package(leapserial 0.5.1 EXACT REQUIRED)
 
 # We have unit test projects via googletest, they're added in the places where they are defined
 enable_testing()
