@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
 include(version.cmake)
 include("standard/Standard.cmake")
-standard_project(LeapIPC VERSION ${LeapIPC_VERSION})
+project(LeapIPC VERSION ${LeapIPC_VERSION})
 
 include(CTest)
 include(CheckTypeSize)
