@@ -6,6 +6,9 @@
 #include <condition_variable>
 #include <vector>
 
+namespace leap { 
+namespace ipc {
+
 class CircularBufferEndpoint :
   public leap::ipc::RawIPCEndpoint
 {
@@ -37,3 +40,6 @@ private:
   void readUnsafe(void* buffer, size_t size);
   void writeUnsafe(const void* buffer, size_t size);
 };
+
+}
+}
