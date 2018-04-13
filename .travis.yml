@@ -9,7 +9,7 @@ matrix:
     - _CXX: g++-4.8
     - CMAKE_URL=http://cmake.org/files/v3.8/cmake-3.8.2-Linux-x86_64.tar.gz
     - AUTOWIRING_URL=https://github.com/leapmotion/autowiring/releases/download/v1.1.0/autowiring-1.1.0-Linux-amd64.tar.gz
-    - LEAPSERIAL_URL=https://github.com/leapmotion/leapserial/releases/download/v0.5.1/LeapSerial-0.5.1-Linux-amd64.tar.gz
+    - LEAPSERIAL_URL=https://github.com/leapmotion/leapserial/releases/download/v0.5.2/LeapSerial-0.5.2-Linux-amd64.tar.gz
     - CMAKE_DIRNAME=cmake-3.8.2-Linux-x86_64
     addons:
       apt:
@@ -26,7 +26,7 @@ matrix:
     - _CXX: clang++
     - CMAKE_URL=http://cmake.org/files/v3.8/cmake-3.8.2-Darwin-x86_64.tar.gz
     - AUTOWIRING_URL=https://github.com/leapmotion/autowiring/releases/download/v1.1.0/autowiring-1.1.0-Darwin.tar.gz
-    - LEAPSERIAL_URL=https://github.com/leapmotion/leapserial/releases/download/v0.5.1/LeapSerial-0.5.1-Darwin.tar.gz
+    - LEAPSERIAL_URL=https://github.com/leapmotion/leapserial/releases/download/v0.5.2/LeapSerial-0.5.2-Darwin.tar.gz
     - CMAKE_DIRNAME=cmake-3.8.2-Darwin-x86_64/CMake.app/Contents
     addons:
       apt:
