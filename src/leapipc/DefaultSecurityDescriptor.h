@@ -17,9 +17,10 @@ private:
   PSID m_pInteractiveSID;
   PSID m_pLocalUsersSID;
   PSID m_pAdminSID;
+  PSID m_pAllAppsSID;
 
 
-  EXPLICIT_ACCESS m_ea[3];
+  EXPLICIT_ACCESS m_ea[4];
   SECURITY_DESCRIPTOR m_sd;
   SECURITY_ATTRIBUTES m_sacl;
 

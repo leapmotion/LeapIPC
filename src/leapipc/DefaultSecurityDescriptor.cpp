@@ -6,12 +6,14 @@ DefaultSecurityDescriptor::DefaultSecurityDescriptor(DWORD userPermissions, DWOR
   m_pInteractiveSID(nullptr),
   m_pLocalUsersSID(nullptr),
   m_pAdminSID(nullptr),
+  m_pAllAppsSID(nullptr),
   m_sd{},
   m_sacl{}
 {
   // Create necessary SIDs:
   {
     SID_IDENTIFIER_AUTHORITY SIDAuthNT = SECURITY_NT_AUTHORITY;
+    SID_IDENTIFIER_AUTHORITY SIDAuthAppPackage = SECURITY_APP_PACKAGE_AUTHORITY;
 
     if(!AllocateAndInitializeSid(&SIDAuthNT, 1, SECURITY_INTERACTIVE_RID, 0, 0, 0, 0, 0, 0, 0, &m_pInteractiveSID))
       throw std::runtime_error("Failed to create SID for SECURITY_INTERACTIVE_RID");
@@ -19,6 +21,8 @@ DefaultSecurityDescriptor::DefaultSecurityDescriptor(DWORD userPermissions, DWOR
       throw std::runtime_error("Failed to create SID for SECURITY_AUTHENTICATED_USER_RID");
     if(!AllocateAndInitializeSid(&SIDAuthNT, 2, SECURITY_BUILTIN_DOMAIN_RID, DOMAIN_ALIAS_RID_ADMINS, 0, 0, 0, 0, 0, 0, &m_pAdminSID))
       throw std::runtime_error("Failed to create SID for SECURITY_BUILTIN_DOMAIN_RID");
+    if(!AllocateAndInitializeSid(&SIDAuthAppPackage, SECURITY_BUILTIN_APP_PACKAGE_RID_COUNT, SECURITY_APP_PACKAGE_BASE_RID, SECURITY_BUILTIN_PACKAGE_ANY_PACKAGE, 0, 0, 0, 0, 0, 0, &m_pAllAppsSID))
+      throw std::runtime_error("Failed to create SID for SECURITY_APP_PACKAGE_BASE_RID (ALL_APPLICATION_PACKAGES)");
   }
 
   // Give interactive users all desired read/write permissions
@@ -60,9 +64,22 @@ DefaultSecurityDescriptor::DefaultSecurityDescriptor(DWORD userPermissions, DWOR
     eaAdmins.Trustee.ptstrName = (LPTSTR) m_pAdminSID;
   }
 
+  // Allow read/write persmissions to AppPackages (UWP)
+  {
+    auto& eaAllApps = m_ea[3];
+    eaAllApps.grfAccessPermissions = userPermissions | STANDARD_RIGHTS_READ | STANDARD_RIGHTS_WRITE;
+    eaAllApps.grfAccessMode = SET_ACCESS;
+    eaAllApps.grfInheritance = NO_INHERITANCE;
+    eaAllApps.Trustee.pMultipleTrustee = nullptr;
+    eaAllApps.Trustee.MultipleTrusteeOperation = NO_MULTIPLE_TRUSTEE;
+    eaAllApps.Trustee.TrusteeForm = TRUSTEE_IS_SID;
+    eaAllApps.Trustee.TrusteeType = TRUSTEE_IS_GROUP;
+    eaAllApps.Trustee.ptstrName = (LPTSTR) m_pAllAppsSID;
+  }
+
   // Import access list:
   PACL pAcl = nullptr;
-  if(SetEntriesInAcl(3, m_ea, nullptr, &pAcl))
+  if(SetEntriesInAcl(4, m_ea, nullptr, &pAcl))
     throw std::runtime_error("Failed to set entries in ACL");
 
   // Security attributes must allow general access by anyone:
@@ -80,4 +97,6 @@ DefaultSecurityDescriptor::~DefaultSecurityDescriptor(void) {
     FreeSid(m_pLocalUsersSID);
   if(m_pAdminSID)
     FreeSid(m_pAdminSID);
+  if (m_pAllAppsSID)
+      FreeSid(m_pAllAppsSID);
 }
